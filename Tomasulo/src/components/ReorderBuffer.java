@@ -67,15 +67,16 @@ public class ReorderBuffer {
 			System.out.print("\t");
 			if(head==i){
 				System.out.print(" YES");
+			}
 			System.out.print("\t");
-			if(tail ==i){
+			if(tail ==i){	
 				System.out.print(" YES");
 			}
 			if(tuple !=null){
 			System.out.print("\t  "  +  tuple.getType()+ "\t  "  + tuple.getDest() + "\t  " + tuple.getValue() + "  " + tuple.isReady());  
 			}
 			}
-		}
+		
 			
 		
 	}
