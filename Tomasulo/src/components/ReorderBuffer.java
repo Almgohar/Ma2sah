@@ -58,7 +58,7 @@ public class ReorderBuffer {
 	
 	public void print(){
 		System.out.println();
-		System.out.println("Number \t Head \t Tail \t Type \t Dest \t Value \t  Ready \t");
+		System.out.println("Number \t Head \t Tail \t Type \t Dest \t Value \t   Ready \t");
 		System.out.println("----------------------------------------------------------------------- ");
 		for(int i =0; i<tuples.length; i++){
 			ROBTuple tuple = tuples[i]; 
@@ -73,7 +73,13 @@ public class ReorderBuffer {
 				System.out.print(" YES");
 			}
 			if(tuple !=null){
-			System.out.print("\t  "  +  tuple.getType()+ "\t  "  + tuple.getDest() + "\t  " + tuple.getValue() + "  " + tuple.isReady());  
+			System.out.print("\t  "  +  tuple.getType()+ "\t  "  + tuple.getDest() + "\t "); 
+			if(tuple.getValue()!=""){
+				System.out.print(tuple.getValue() + "   " + tuple.isReady() );
+			}
+			else{
+				System.out.print("\t   " + tuple.isReady());  
+			}
 			}
 			}
 		
