@@ -254,6 +254,13 @@ public class Simulator {
 		return (freeResStat && ROB.canInsert());
 	}
 	
+	public boolean canExecute(ReservationStation resStation){
+		if(resStation.getQj() == null && resStation.getQk() == null
+				&& resStation.getVj() != null && resStation.getVk() != null)
+			return true;
+		return false;
+	}
+	
 	/************************* *******************************************/
 	public static void main(String[] args) throws NumberFormatException,
 			IOException {
