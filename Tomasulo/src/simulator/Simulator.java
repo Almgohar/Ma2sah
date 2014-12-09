@@ -1,5 +1,7 @@
 package simulator;
 
+import helpers.Instruction;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,10 +15,16 @@ import components.Parser;
 import components.Record;
 import components.Register;
 import components.RegisterFile;
+import components.ReorderBuffer;
+import components.ReservationStation;
 import components.Set;
 import components.Tuple;
 
 public class Simulator {
+	/*** new ***/
+	ArrayList<ReservationStation> reservationStations = new ArrayList<ReservationStation>();
+	ReorderBuffer ROB = new ReorderBuffer(7);
+	/*** ***/
 	ArrayList<Cache> caches = new ArrayList<Cache>();
 	RegisterFile registerFile = new RegisterFile();
 	Parser parser;
@@ -102,6 +110,8 @@ public class Simulator {
 	public void wTWarrStore() {
 
 	}
+	
+	
 /*
 	public void wTWallStore(String address, String newData) {
 		int i = 0;
@@ -226,6 +236,25 @@ public class Simulator {
 	public void wTWarrUpdate() {
 
 	}
+	
+	/************************* TOMASULO 7AGAT *******************************************/
+	
+	public boolean canIssue(Instruction instruction){
+		boolean freeResStat = false;
+		String type = instruction.getInstructionType();
+		for(int i = 0; i < reservationStations.size(); i++){
+			ReservationStation resStation = reservationStations.get(i);
+			if(resStation.getUnit().equals(type)){
+				if(!resStation.isBusy()){
+					freeResStat = true;
+					break;
+				}
+			}
+		}
+		return (freeResStat && ROB.canInsert());
+	}
+	
+	/************************* *******************************************/
 	public static void main(String[] args) throws NumberFormatException,
 			IOException {
 		int latency = 0;
