@@ -88,8 +88,7 @@ public class ReorderBuffer {
 				System.out.print("\t  " + tuple.getType() + "\t  "
 						+ tuple.getDest() + "\t ");
 				if (tuple.getValue() != "") {
-					System.out
-							.print(tuple.getValue() + "   " + tuple.isReady());
+					System.out.print(tuple.getValue() + "   " + tuple.isReady());
 				} else {
 					System.out.print("\t   " + tuple.isReady());
 				}
@@ -111,7 +110,6 @@ public class ReorderBuffer {
 		Rob.insert("LD R3");
 		Rob.print();
 		Rob.insert("ADD R1");
-
 		Rob.print();
 
 	}
