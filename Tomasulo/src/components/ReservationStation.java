@@ -3,7 +3,8 @@ package components;
 import helpers.FunctionalUnit;
 
 public class ReservationStation {
-	FunctionalUnit unit; 
+	//FunctionalUnit unit; 
+	String unit;
 	String operation;
 	String vj;
 	String vk;
@@ -13,7 +14,7 @@ public class ReservationStation {
 	String address;
 	boolean busy;
 	
-	public FunctionalUnit getUnit() {
+	public String getUnit() {
 		return unit;
 	}
 
@@ -85,7 +86,7 @@ public class ReservationStation {
 		this.busy = busy;
 	}
 
-	public ReservationStation(FunctionalUnit unit) {
+	public ReservationStation(String unit) {
 		this.unit = unit;
 	}
 	
