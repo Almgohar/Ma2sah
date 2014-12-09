@@ -31,7 +31,7 @@ public class ReorderBuffer {
 		numOfInstructions++;
 
 	}
-	
+
 	public void commit() {
 		tuples[head] = null;
 		head = (head + 1) % size;
@@ -49,43 +49,55 @@ public class ReorderBuffer {
 	public void updateValue(int index, String value) {
 		tuples[index].setValue(value);
 	}
-	public int getHead(){
-		return head; 
+
+	public String getValue(int index) {
+		return tuples[index].getValue();
 	}
-	public int getTail(){
-		return tail; 
+
+	public boolean isReady(int index) {
+		return tuples[index].isReady();
 	}
-	
-	public void print(){
+
+	public int getHead() {
+		return head;
+	}
+
+	public int getTail() {
+		return tail;
+	}
+
+	public void print() {
 		System.out.println();
-		System.out.println("Number \t Head \t Tail \t Type \t Dest \t Value \t   Ready \t");
-		System.out.println("----------------------------------------------------------------------- ");
-		for(int i =0; i<tuples.length; i++){
-			ROBTuple tuple = tuples[i]; 
+		System.out
+				.println("Number \t Head \t Tail \t Type \t Dest \t Value \t   Ready \t");
+		System.out
+				.println("----------------------------------------------------------------------- ");
+		for (int i = 0; i < tuples.length; i++) {
+			ROBTuple tuple = tuples[i];
 			System.out.println(" ");
-			System.out.print(i+1);
+			System.out.print(i + 1);
 			System.out.print("\t");
-			if(head==i){
+			if (head == i) {
 				System.out.print(" YES");
 			}
 			System.out.print("\t");
-			if(tail ==i){	
+			if (tail == i) {
 				System.out.print(" YES");
 			}
-			if(tuple !=null){
-			System.out.print("\t  "  +  tuple.getType()+ "\t  "  + tuple.getDest() + "\t "); 
-			if(tuple.getValue()!=""){
-				System.out.print(tuple.getValue() + "   " + tuple.isReady() );
+			if (tuple != null) {
+				System.out.print("\t  " + tuple.getType() + "\t  "
+						+ tuple.getDest() + "\t ");
+				if (tuple.getValue() != "") {
+					System.out
+							.print(tuple.getValue() + "   " + tuple.isReady());
+				} else {
+					System.out.print("\t   " + tuple.isReady());
+				}
 			}
-			else{
-				System.out.print("\t   " + tuple.isReady());  
-			}
-			}
-			}
-		
-			
-		
+		}
+
 	}
+
 	public static void main(String[] args) {
 		ReorderBuffer Rob = new ReorderBuffer(3);
 		Rob.print();
@@ -99,9 +111,8 @@ public class ReorderBuffer {
 		Rob.insert("LD R3");
 		Rob.print();
 		Rob.insert("ADD R1");
-	
+
 		Rob.print();
-		
-		
+
 	}
 }
