@@ -261,6 +261,10 @@ public class Simulator {
 		return false;
 	}
 	
+	public boolean canCommit(ReservationStation resStation, int index){
+		return (ROB.getHead() == index && ROB.isReady(index));
+	}
+	
 	/************************* *******************************************/
 	public static void main(String[] args) throws NumberFormatException,
 			IOException {
