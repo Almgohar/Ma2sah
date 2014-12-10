@@ -10,6 +10,7 @@ import java.util.HashMap;
 
 import components.ALU;
 import components.Cache;
+import components.CommonDataBus;
 import components.Memory;
 import components.Parser;
 import components.Record;
@@ -24,6 +25,9 @@ public class Simulator {
 	/*** new ***/
 	ArrayList<ReservationStation> reservationStations = new ArrayList<ReservationStation>();
 	ReorderBuffer ROB = new ReorderBuffer(7);
+	CommonDataBus CDB = new CommonDataBus(null, false);
+	String [] status = {"init","fetch","issue",
+			"execute","write","commit"};
 	/*** ***/
 	ArrayList<Cache> caches = new ArrayList<Cache>();
 	RegisterFile registerFile = new RegisterFile();
@@ -263,6 +267,10 @@ public class Simulator {
 	
 	public boolean canCommit(ReservationStation resStation, int index){
 		return (ROB.getHead() == index && ROB.isReady(index));
+	}
+	
+	public boolean canWrite(ReservationStation resStation, int index){
+		return !(CDB.isBusy());
 	}
 	
 	/************************* *******************************************/
