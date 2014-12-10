@@ -1,41 +1,29 @@
 package components;
 
 public class CommonDataBus {
-	// Each piece of data on the bus has a source FU represented by the RS
-	// and has a destination Register that it needs to be written to
-	ReservationStation source;
-	String data;
-	Register destination;
+	CDBTuple dataBusTuple;
+	boolean busy;
 
-	public CommonDataBus(ReservationStation source, String data,
-			Register destination) {
-		this.source = source;
-		this.data = data;
-		this.destination = destination;
+	public CommonDataBus(CDBTuple dataBusTuple, boolean busy) {
+		this.dataBusTuple = dataBusTuple;
+		this.busy = busy;
 	}
 
-	public ReservationStation getSource() {
-		return source;
-	}
-	// in write phase?
-	public void setSource(ReservationStation source) {
-		this.source = source;
+	public CDBTuple getDataBusTuple() {
+		return dataBusTuple;
 	}
 
-	public String getData() {
-		return data;
-	}
-	// in write phase?
-	public void setData(String data) {
-		this.data = data;
+	public void setDataBusTuple(CDBTuple dataBusTuple) {
+		this.dataBusTuple = dataBusTuple;
 	}
 
-	public Register getDestination() {
-		return destination;
+	public boolean isBusy() {
+		return busy;
 	}
-	// in write phase?
-	public void setDestination(Register destination) {
-		this.destination = destination;
+
+	public void setBusy(boolean busy) {
+		this.busy = busy;
 	}
+	
 
 }
