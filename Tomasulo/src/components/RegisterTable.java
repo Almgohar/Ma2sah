@@ -3,7 +3,8 @@ package components;
 import java.util.HashMap;
 
 public class RegisterTable {
-
+	// The register table maps each register to the reservation station using
+	// it, otherwise null, needed to check availability of register
 	RegisterFile regFile;
 	HashMap<Register, ReservationStation> registerTable;
 
