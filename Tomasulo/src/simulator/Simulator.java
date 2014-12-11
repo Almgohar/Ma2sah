@@ -268,7 +268,9 @@ public class Simulator {
 		return false;
 	}
 	
-	public boolean canCommit(ReservationStation resStation, int index){
+	public boolean canCommit(ReservationStation resStation){
+		//where index is the index of the required ROB
+		int index = Integer.parseInt(resStation.getDest());
 		return (ROB.getHead() == index && ROB.isReady(index));
 	}
 	
