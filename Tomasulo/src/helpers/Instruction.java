@@ -1,32 +1,48 @@
 package helpers;
 
 public class Instruction {
-	String type;
+	String opcode; // add sub load etc
+	 String type; // FP load store
 	String status;
 	boolean stall;
 	int executeCycle;
 	int executeCycleCount;
 
 	public Instruction(String type, String status, boolean stall,
-			int executeCycle) {
-		this.type = type;
+			int executeCycle, String opcode) {
+		this.opcode = opcode;
 		this.status = status; //will be sent from simulator 
 							  //as status[0] which is init
 		stall = false;
 		this.executeCycle = executeCycle;
-		
+		this.type = type;
 	}
 
-	public String getInstructionType() {
-		return type;
+	public int getRS(){
+		//TODO
+		//break instructin nd get rs
+		return 0;
 	}
-
+	public int getRT(){
+		//TODO
+		//break instructin nd get rt
+		return 0;
+	}
+	public int getRD(){
+		//TODO
+		//break instructin nd get rd
+		return 0;
+	}
 	public String getType() {
 		return type;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public String getOpcode() {
+		return opcode;
+	}
+
+	public void setOpcode(String opcde) {
+		this.opcode = opcode;
 	}
 
 	public String getStatus() {

@@ -1,5 +1,5 @@
 package simulator;
-
+import java.util.*;
 import helpers.Instruction;
 
 import java.io.BufferedReader;
@@ -28,6 +28,8 @@ public class Simulator {
 	CommonDataBus CDB = new CommonDataBus(null, false);
 	String [] status = {"init","fetch","issue",
 			"execute","write","commit"};
+	int [] regROB = new int [8];
+	
 	/*** ***/
 	ArrayList<Cache> caches = new ArrayList<Cache>();
 	RegisterFile registerFile = new RegisterFile();
@@ -242,13 +244,14 @@ public class Simulator {
 	}
 	
 	/************************* TOMASULO 7AGAT *******************************************/
-	
+	//if any of these returned false, set stall with true
+	//if i can't issue, don't issue anything after
 	public boolean canIssue(Instruction instruction){
 		boolean freeResStat = false;
-		String type = instruction.getInstructionType();
+		String opcode = instruction.getOpcode();
 		for(int i = 0; i < reservationStations.size(); i++){
 			ReservationStation resStation = reservationStations.get(i);
-			if(resStation.getUnit().equals(type)){
+			if(resStation.getUnit().equals(opcode)){
 				if(!resStation.isBusy()){
 					freeResStat = true;
 					break;
@@ -273,10 +276,64 @@ public class Simulator {
 		return !(CDB.isBusy());
 	}
 	
+	public void issue(Instruction instruction, ReservationStation resStation, int ROBIndex){
+		int rs = instruction.getRS();
+		int rt = instruction.getRT();
+		if(regROB[rs] == -1){
+			int h = regROB[rs];
+			if(ROB.isReady(h)){
+				resStation.setVj(ROB.getValue(h));
+				resStation.setQj(null);
+			}else{
+				resStation.setQj(h+"");
+			}
+			
+		}else{
+			resStation.setVj(rs+""); //the number of the register ex for register 1 rs = "1"
+			resStation.setQj(null);
+		}
+		resStation.setBusy(true);
+		resStation.setDest(ROBIndex+"");
+		//ROB.insert(instruction); //TODO
+		
+		if(instruction.getType().equals("FP") || instruction.getType().equals("store")){
+			
+		}
+		if(instruction.getType().equals("store")){
+			
+		}
+		if(instruction.getType().equals("load")){
+			
+		}
+		if(instruction.getType().equals("FP")){
+			
+		}
+	}
+	
+	public void execute(){
+		
+	}
+	public void executeLoad(){
+		
+	}
+	public void executeStore(){
+		
+	}
+	public void write(){
+		
+	}
+	public void writeStore(){
+		
+	}
+	public void commit(){
+		
+	}
 	/************************* *******************************************/
 	public static void main(String[] args) throws NumberFormatException,
 			IOException {
 		int latency = 0;
+
+		
 		BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
 		int numberOfCaches = Integer.parseInt(bf.readLine());
 		ArrayList<Tuple> tuples = new ArrayList<Tuple>();
@@ -310,6 +367,9 @@ public class Simulator {
 
 		simulator.registerFile.PC.setValue(decimalToBinary(Integer
 				.parseInt(startAddress)));
+		/*** new ***/
+		Arrays.fill(simulator.regROB,-1);
+		/*** ***/
 		String address = startAddress;
 		int numberOfInstructions = Integer.parseInt(bf.readLine());
 		int numOfInstructions = numberOfInstructions;
