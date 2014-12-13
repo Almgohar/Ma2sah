@@ -1,54 +1,71 @@
 package helpers;
 
 public class Instruction {
-	String opcode; // add sub load etc
-	 String type; // FP load store
+	// /String opcode; // add sub load etc
+	// String type; // FP load store
 	String status;
 	boolean stall;
 	int executeCycle;
 	int executeCycleCount;
-	
+	String instruction; //instruction coming from the simulator
+	boolean immediate; //checks if the instruction is an i-instrction
+	String[] inst;
 
-	public Instruction(String type, String status, boolean stall,
-			int executeCycle, String opcode) {
-		this.opcode = opcode;
-		this.status = status; //will be sent from simulator 
-							  //as status[0] which is init
+	public Instruction(String instruction, String status, boolean stall,
+			int executeCycle) {
+		this.instruction = instruction;
+		this.status = status; // will be sent from simulator
+								// as status[0] which is init
 		stall = false;
 		this.executeCycle = executeCycle;
-		this.type = type;
+		this.inst = instruction.split(" ");
 	}
-	public int getImm(){
-		//TODO
-		//break instructin get immediate
+
+	public String getInst() {
+		return instruction;
+	}
+
+	public int getImm() {
+		if(immediate)
+			return Integer.parseInt(inst[3]);
 		return 0;
 	}
-	
-	public int getRS(){
-		//TODO
-		//break instructin and get rs
+
+	public int getRS() {
+		return Integer.parseInt(inst[2]);
+	}
+
+	public int getRT() {
+		if(!immediate)
+			return Integer.parseInt(inst[3]);
 		return 0;
 	}
-	public int getRT(){
-		//TODO
-		//break instructin and get rt
-		return 0;
+
+	public int getRD() {
+		return Integer.parseInt(inst[1]);
 	}
-	public int getRD(){
-		//TODO
-		//break instructin nd get rd
-		return 0;
-	}
+
 	public String getType() {
-		return type;
+		switch (inst[0].toLowerCase()) {
+		case "add":
+			return "FP";
+		case "sub":
+			return "FP";
+		case "addi":
+			immediate = true;
+			return "FP";
+		case "mul":
+			return "FP";
+		case "ld":
+			return "Load";
+		case "str":
+			return "Store";
+		}
+		return "null";
 	}
 
 	public String getOpcode() {
-		return opcode;
-	}
-
-	public void setOpcode(String opcde) {
-		this.opcode = opcode;
+		return inst[0];
 	}
 
 	public String getStatus() {
