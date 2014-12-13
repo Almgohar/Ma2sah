@@ -7,6 +7,7 @@ public class Instruction {
 	boolean stall;
 	int executeCycle;
 	int executeCycleCount;
+	
 
 	public Instruction(String type, String status, boolean stall,
 			int executeCycle, String opcode) {
@@ -17,15 +18,20 @@ public class Instruction {
 		this.executeCycle = executeCycle;
 		this.type = type;
 	}
-
+	public int getImm(){
+		//TODO
+		//break instructin get immediate
+		return 0;
+	}
+	
 	public int getRS(){
 		//TODO
-		//break instructin nd get rs
+		//break instructin and get rs
 		return 0;
 	}
 	public int getRT(){
 		//TODO
-		//break instructin nd get rt
+		//break instructin and get rt
 		return 0;
 	}
 	public int getRD(){

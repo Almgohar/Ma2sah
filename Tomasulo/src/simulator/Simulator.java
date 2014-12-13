@@ -299,36 +299,72 @@ public class Simulator {
 		//ROB.insert(instruction); //TODO
 		
 		if(instruction.getType().equals("FP") || instruction.getType().equals("store")){
-			
+			if(regROB[rt] == -1){
+				int h = regROB[rt];
+				if(ROB.isReady(h)){
+					resStation.setVk(ROB.getValue(h));
+					resStation.setQk(null);
+				}else{
+					resStation.setQk(h+"");
+				}
+				
+			}else{
+				resStation.setVk(rt+""); //the number of the register ex for register 1 rt = "1"
+				resStation.setQk(null);
+			}
 		}
 		if(instruction.getType().equals("store")){
-			
+			//TODO
 		}
 		if(instruction.getType().equals("load")){
-			
+			//TODO
 		}
 		if(instruction.getType().equals("FP")){
-			
+			resStation.setAddress(instruction.getImm()+"");
 		}
 	}
 	
 	public void execute(){
-		
+		//TODO
 	}
-	public void executeLoad(){
+	/*public void executeLoad(){
 		
 	}
 	public void executeStore(){
 		
-	}
-	public void write(){
+	}*/
+	public void write(ReservationStation resStation){
+		String b = resStation.getDest();
+		for(int i =0; i < reservationStations.size(); i++){
+			ReservationStation rs = reservationStations.get(i);
+			if(rs.getQj().equals(b)){
+				rs.setQj(null);
+				for(int j =0; j < regROB.length; j++){
+					if(regROB[j] == Integer.parseInt(b)){
+						rs.setVj(j+"");
+						break;
+					}
+				}
+			}
+			if(rs.getQk().equals(b)){
+				rs.setQk(null);
+				for(int j =0; j < regROB.length; j++){
+					if(regROB[j] == Integer.parseInt(b)){
+						rs.setVk(j+"");
+						break;
+					}
+				}
+			}
+			
+		}
+		//TODO ROB
 		
 	}
 	public void writeStore(){
-		
+		//TODO ROB
 	}
 	public void commit(){
-		
+		//TODO
 	}
 	/************************* *******************************************/
 	public static void main(String[] args) throws NumberFormatException,
