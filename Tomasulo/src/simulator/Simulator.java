@@ -411,11 +411,9 @@ public class Simulator {
 		for(int i = 0; i < reservationStations.size(); i++){
 			ReservationStation resStation = reservationStations.get(i);
 			if(resStation.getUnit().equals(opcode)){
-				if(!resStation.isBusy()){
 					station = resStation; 
 					break;
 				}
-			}
 		}
 		switch(opcode){
 		case "LD":
