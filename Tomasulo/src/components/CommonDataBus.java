@@ -24,6 +24,11 @@ public class CommonDataBus {
 	public void setBusy(boolean busy) {
 		this.busy = busy;
 	}
+
+	public void broadCast(String b, String result) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 
 }

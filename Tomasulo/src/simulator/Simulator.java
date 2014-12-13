@@ -298,24 +298,26 @@ public class Simulator {
 			
 			switch (rs) {
 			case 0:
-			regVj = registerFile.R0;
+			regVj = registerFile.R0;break;
 			case 1:
-			regVj = registerFile.R1;
+			regVj = registerFile.R1;break;
 			case 2:
-			regVj = registerFile.R2;
+			regVj = registerFile.R2;break;
 			case 3:
-			regVj = registerFile.R3;
+			regVj = registerFile.R3;break;
 			case 4:
-			regVj = registerFile.R4;
+			regVj = registerFile.R4;break;
 			case 5:
-			regVj = registerFile.R5;
+			regVj = registerFile.R5;break;
 			case 6:
-			regVj = registerFile.R6;
+			regVj = registerFile.R6;break;
 			case 7:
-			regVj = registerFile.R7;
+			regVj = registerFile.R7;break;
 			default : regVj = null;
 			}
+			if(regVj != null)
 			resStation.setVj(regVj.getValue()); 
+			else resStation.setVj(null); 
 			resStation.setQj(null);
 			
 		}
@@ -336,24 +338,26 @@ public class Simulator {
 			}else{
 				switch (rt) {
 				case 0:
-				regVj = registerFile.R0;
+				regVk = registerFile.R0;break;
 				case 1:
-				regVj = registerFile.R1;
+				regVk = registerFile.R1;break;
 				case 2:
-				regVj = registerFile.R2;
+				regVk = registerFile.R2;break;
 				case 3:
-				regVj = registerFile.R3;
+				regVk = registerFile.R3;break;
 				case 4:
-				regVj = registerFile.R4;
+				regVk = registerFile.R4;break;
 				case 5:
-				regVj = registerFile.R5;
+				regVk = registerFile.R5;break;
 				case 6:
-				regVj = registerFile.R6;
+				regVk = registerFile.R6;break;
 				case 7:
-				regVj = registerFile.R7;
+				regVk = registerFile.R7;break;
 				default : regVk = null;
 				}
+				if(regVk != null)
 				resStation.setVk(regVk.getValue()); 
+				else resStation.setVk(null);
 				resStation.setQk(null);
 			}
 		}
@@ -379,31 +383,12 @@ public class Simulator {
 	public void executeStore(){
 		
 	}*/
-	public void write(ReservationStation resStation){
+	public void write(ReservationStation resStation, String result){
 		String b = resStation.getDest();
-		for(int i =0; i < reservationStations.size(); i++){
-			ReservationStation rs = reservationStations.get(i);
-			if(rs.getQj().equals(b)){
-				rs.setQj(null);
-				for(int j =0; j < regROB.length; j++){
-					if(regROB[j] == Integer.parseInt(b)){
-						rs.setVj(j+"");
-						break;
-					}
-				}
-			}
-			if(rs.getQk().equals(b)){
-				rs.setQk(null);
-				for(int j =0; j < regROB.length; j++){
-					if(regROB[j] == Integer.parseInt(b)){
-						rs.setVk(j+"");
-						break;
-					}
-				}
-			}
-			
-		}
-		//TODO ROB
+		CDB.broadCast(b,result);
+		
+		ROB.updateState(Integer.parseInt(b), true);
+		ROB.updateValue(Integer.parseInt(b), result );
 		
 	}
 	public void writeStore(){
