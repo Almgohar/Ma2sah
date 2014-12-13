@@ -280,7 +280,11 @@ public class Simulator {
 	
 	public void issue(Instruction instruction, ReservationStation resStation, int ROBIndex){
 		int rs = instruction.getRS();
+		Register regVj;
+		Register regVk;
 		int rt = instruction.getRT();
+		int rd = instruction.getRD();
+		String inst = instruction.getInst();
 		if(regROB[rs] == -1){
 			int h = regROB[rs];
 			if(ROB.isReady(h)){
@@ -291,12 +295,33 @@ public class Simulator {
 			}
 			
 		}else{
-			resStation.setVj(rs+""); //the number of the register ex for register 1 rs = "1"
+			
+			switch (rs) {
+			case 0:
+			regVj = registerFile.R0;
+			case 1:
+			regVj = registerFile.R1;
+			case 2:
+			regVj = registerFile.R2;
+			case 3:
+			regVj = registerFile.R3;
+			case 4:
+			regVj = registerFile.R4;
+			case 5:
+			regVj = registerFile.R5;
+			case 6:
+			regVj = registerFile.R6;
+			case 7:
+			regVj = registerFile.R7;
+			default : regVj = null;
+			}
+			resStation.setVj(regVj.getValue()); 
 			resStation.setQj(null);
+			
 		}
 		resStation.setBusy(true);
 		resStation.setDest(ROBIndex+"");
-		//ROB.insert(instruction); //TODO
+		ROB.insert(inst);
 		
 		if(instruction.getType().equals("FP") || instruction.getType().equals("store")){
 			if(regROB[rt] == -1){
@@ -309,18 +334,39 @@ public class Simulator {
 				}
 				
 			}else{
-				resStation.setVk(rt+""); //the number of the register ex for register 1 rt = "1"
+				switch (rt) {
+				case 0:
+				regVj = registerFile.R0;
+				case 1:
+				regVj = registerFile.R1;
+				case 2:
+				regVj = registerFile.R2;
+				case 3:
+				regVj = registerFile.R3;
+				case 4:
+				regVj = registerFile.R4;
+				case 5:
+				regVj = registerFile.R5;
+				case 6:
+				regVj = registerFile.R6;
+				case 7:
+				regVj = registerFile.R7;
+				default : regVk = null;
+				}
+				resStation.setVk(regVk.getValue()); 
 				resStation.setQk(null);
 			}
 		}
 		if(instruction.getType().equals("store")){
-			//TODO
+			resStation.setAddress(instruction.getImm()+"");
 		}
 		if(instruction.getType().equals("load")){
-			//TODO
+			resStation.setAddress(instruction.getImm()+"");
+			rt = instruction.getRD();
+			regROB[rt] = ROBIndex;
 		}
 		if(instruction.getType().equals("FP")){
-			resStation.setAddress(instruction.getImm()+"");
+			regROB[rd] = ROBIndex;
 		}
 	}
 	
