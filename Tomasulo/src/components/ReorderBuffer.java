@@ -1,5 +1,7 @@
 package components;
 
+import java.util.ArrayList;
+
 public class ReorderBuffer {
 	ROBTuple[] tuples;
 	int head;
@@ -40,6 +42,38 @@ public class ReorderBuffer {
 
 	public ROBTuple getEntry(int index) {
 		return tuples[index];
+	}
+	
+	public boolean hasStore() {
+		int headPointer = head;
+		while (headPointer <= tail) {
+			if (tuples[headPointer].getType().equals("SD"))
+				return true;
+			headPointer = (headPointer + 1) % size;
+		}
+		return false;
+	}
+
+	public ArrayList<String> returnStoreAddresses() {
+		ArrayList<String> list = new ArrayList<String>();
+		int headPointer = head;
+		while (headPointer <= tail) {
+			if (tuples[headPointer].getType().equals("SD"))
+				list.add(tuples[headPointer].getValue());
+			headPointer = (headPointer + 1) % size;
+		}
+		return list;
+	}
+	
+	public int getIndex(String opCode) {
+		for (int i = 0; i < size; i++) {
+			if (tuples[i].getValue() != null) {
+				if (tuples[i].getValue().equals(opCode)) {
+					return i;
+				}
+			}
+		}
+		return -1;
 	}
 
 	public void updateState(int index, boolean state) {

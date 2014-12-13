@@ -1,5 +1,6 @@
 package simulator;
 import java.util.*;
+
 import helpers.Instruction;
 
 import java.io.BufferedReader;
@@ -261,12 +262,42 @@ public class Simulator {
 		return (freeResStat && ROB.canInsert());
 	}
 	
-	public boolean canExecute(ReservationStation resStation){
+	public boolean canExecute(ReservationStation resStation, Instruction instruction){
+		if(instruction.getOpcode().equals("LD")){
+			if(instruction.getExecuteCycle()==0){
+				if(resStation.getQj()==null && !ROB.hasStore())
+					return true; 
+				return false; 
+			}
+			else{
+				String address =resStation.getAddress(); 
+				ArrayList<String> addresses = ROB.returnStoreAddresses(); 
+				if(addresses.size()== 0){
+					return true; 
+				}
+				else{
+					for(int i=0; i<addresses.size(); i++){
+						if(address.equals(addresses.get(i)))
+							return false;
+					}
+					return true; 
+				}
+			}
+		}
+		if(instruction.getOpcode().equals("SD")){
+			if(resStation.getQj()==null){
+				//&& ROB.getEntry(ROB.getHead()).getType()=="SD"){
+				//can only have one store
+				return true; 
+			}
+			return false; 
+		}
 		if(resStation.getQj() == null && resStation.getQk() == null
 				&& resStation.getVj() != null && resStation.getVk() != null)
 			return true;
 		return false;
 	}
+
 	
 	public boolean canCommit(ReservationStation resStation){
 		//where index is the index of the required ROB
@@ -374,9 +405,38 @@ public class Simulator {
 		}
 	}
 	
-	public void execute(){
-		//TODO
+	public String execute(Instruction instruction){
+		ReservationStation station=null;
+		String opcode = instruction.getOpcode();
+		for(int i = 0; i < reservationStations.size(); i++){
+			ReservationStation resStation = reservationStations.get(i);
+			if(resStation.getUnit().equals(opcode)){
+				if(!resStation.isBusy()){
+					station = resStation; 
+					break;
+				}
+			}
+		}
+		switch(opcode){
+		case "LD":
+			if(instruction.getExecuteCycleCount()==0){
+				String value = decimalToBinary(binaryToDecimal(station.getVj()) + binaryToDecimal(station.getAddress()));
+				station.setAddress(value);
+				return value; 
+			}
+			else{
+				return memory.getValue(station.getAddress());
+			}
+		case "SD":
+			int index = ROB.getIndex("SD");
+			String value  = decimalToBinary(binaryToDecimal(station.getVj()) + binaryToDecimal(station.getAddress()));
+			ROB.updateValue(index, value);
+			return value;  
+		default: return alu.arithmetic(instruction.getInst());
+		}
+		
 	}
+
 	/*public void executeLoad(){
 		
 	}

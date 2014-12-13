@@ -7,34 +7,28 @@ public class ALU {
 		this.registerFile = registerFile;
 	}
 
-	public void arithmetic(String instruction) {
+	public String arithmetic(String instruction) {
 		String[] instArray = instruction.split(" ");
 		Register dest = getRegister(1, instArray);
 		Register source1 = getRegister(2, instArray);
 		Register source2 = getRegister(3, instArray);
 		switch (instArray[0]) {
 		case "ADD":
-			add(dest, source1, source2);
-			break;
+			return add(dest, source1, source2);
 		case "SUB":
-			sub(dest, source1, source2);
-			break;
+			return sub(dest, source1, source2);
 		case "ADDI":
-			addi(dest, source1, instArray[3]);
-			break;
+			return addi(dest, source1, instArray[3]);
 		case "MUL":
-			mul(dest, source1, source2);
-			break;
+			return mul(dest, source1, source2);
 		case "NAND":
-			nand(dest, source1, source2);
-			break;
-
+			return nand(dest, source1, source2);
 		}
-		registerFile.print();
-		System.out.println(" ");
+		//registerFile.print();
+		return ""; 
 	}
 
-	private void nand(Register dest, Register source1, Register source2) {
+	private String nand(Register dest, Register source1, Register source2) {
 		int source1Value = binaryToDecimal(source1.getValue());
 		int source2Value = binaryToDecimal(source2.getValue());
 		int newValue = (source1Value & source2Value);
@@ -47,39 +41,39 @@ public class ALU {
 				returnString+="0";
 		}
 		
-		dest.setValue(returnString);
+		return returnString;
 	}
 
-	private void mul(Register dest, Register source1, Register source2) {
+	private String mul(Register dest, Register source1, Register source2) {
 		int source1Value = binaryToDecimal(source1.getValue());
 		int source2Value = binaryToDecimal(source2.getValue());
 		int newValue = source1Value * source2Value;
-		dest.setValue(decimalToBinary(newValue));
+		return decimalToBinary(newValue);
 
 	}
 
-	private void addi(Register dest, Register source1, String immediate) {
+	private String addi(Register dest, Register source1, String immediate) {
 		int source1Value = binaryToDecimal(source1.getValue());
 		int source2Value = Integer.parseInt(immediate);
 		int newValue = source1Value + source2Value;
-		dest.setValue(decimalToBinary(newValue));
+		return decimalToBinary(newValue);
 
 	}
 
-	private void sub(Register dest, Register source1, Register source2) {
+	private String sub(Register dest, Register source1, Register source2) {
 		int source1Value = binaryToDecimal(source1.getValue());
 		int source2Value = binaryToDecimal(source2.getValue());
 		int newValue = source1Value - source2Value;
-		dest.setValue(decimalToBinary(newValue));
+		return decimalToBinary(newValue);
 
 	}
 
-	private void add(Register dest, Register source1, Register source2) {
+	private String add(Register dest, Register source1, Register source2) {
 		int source1Value = binaryToDecimal(source1.getValue());
 		int source2Value = binaryToDecimal(source2.getValue());
 		int newValue = source1Value + source2Value;
 		
-		dest.setValue(decimalToBinary(newValue));
+		return decimalToBinary(newValue);
 
 	}
 
