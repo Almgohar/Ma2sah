@@ -25,8 +25,6 @@ public class ReorderBuffer {
 		String[] instr = instruction.split(" ");
 		String type = instr[0];
 		String destination = instr[1];
-		if (instr[0].equals("SD"))
-			destination = "MEM";
 		ROBTuple tuple = new ROBTuple(type, destination);
 		tuples[tail] = tuple;
 		tail = (tail + 1) % size;
@@ -131,7 +129,7 @@ public class ReorderBuffer {
 
 	}
 
-	public static void main(String[] args) {
+/*	public static void main(String[] args) {
 		ReorderBuffer Rob = new ReorderBuffer(3);
 		Rob.print();
 		Rob.insert("LD R1");
@@ -146,5 +144,5 @@ public class ReorderBuffer {
 		Rob.insert("ADD R1");
 		Rob.print();
 
-	}
+	}*/
 }

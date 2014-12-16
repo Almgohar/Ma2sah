@@ -46,20 +46,20 @@ public class Instruction {
 	}
 
 	public String getType() {
-		switch (inst[0].toLowerCase()) {
-		case "add":
+		switch (inst[0]) {
+		case "ADD":
 			return "FP";
-		case "sub":
+		case "SUB":
 			return "FP";
-		case "addi":
+		case "ADDI":
 			immediate = true;
 			return "FP";
-		case "mul":
+		case "MUL":
 			return "FP";
-		case "ld":
-			return "Load";
-		case "str":
-			return "Store";
+		case "LW":
+			return "load";
+		case "SW":
+			return "store";
 		}
 		return "null";
 	}

@@ -24,10 +24,10 @@ import components.Tuple;
 
 public class Simulator {
 	/*** new ***/
-	ArrayList<ReservationStation> reservationStations = new ArrayList<ReservationStation>();
+	public static ArrayList<ReservationStation> reservationStations = new ArrayList<ReservationStation>();
 	ReorderBuffer ROB = new ReorderBuffer(7);
 	CommonDataBus CDB = new CommonDataBus(null, false);
-	String [] status = {"init","fetch","issue",
+	static String [] status = {"init","fetch","issue",
 			"execute","write","commit"};
 	int [] regROB = new int [8];
 	
@@ -449,14 +449,93 @@ public class Simulator {
 		ROB.updateValue(Integer.parseInt(b), result );
 		
 	}
-	public void writeStore(){
-		//TODO ROB
+	public boolean writeStore(ReservationStation resStation, String result){
+		if(resStation.getQk() == null){
+			String b = resStation.getDest();
+			ROB.updateValue(Integer.parseInt(b), result );
+			return true;
+		}
+			return false;
 	}
-	public void commit(){
-		//TODO
+
+	public void commit(Instruction instruction) {
+		String d = ROB.getEntry(ROB.getHead()).getDest();
+		String value = ROB.getValue(ROB.getHead());
+		String type = instruction.getOpcode();
+		if (type.equals("BEQ")) {
+
+		} else if (type.equals("SW")) {
+			String regVal = getRegister(d).getValue();
+			memory.iMemory.put(regVal, value);
+		} else {
+			Register reg = getRegister(d);
+			reg.setValue(value);
+
+		}
+		ROB.getEntry(ROB.getHead()).setReady(true);
+		ROB.commit();
+		for(int i =0; i<regROB.length;i++){
+			if(regROB[i]==getRegisterInt(d)){
+				regROB[i]=-1; 
+			}
+		}
+		for(int i=0; i<reservationStations.size();i++){
+			if(reservationStations.get(i).equals("" +getRegisterInt(d))){
+				reservationStations.get(i).setBusy(false);
+			}
+		}
+
 	}
-	/************************* *******************************************/
-	public static void main(String[] args) throws NumberFormatException,
+	
+	public Register getRegister(String register) {
+		switch (register) {
+		case "R0":
+			return registerFile.R0;
+		case "R1":
+			return registerFile.R1;
+		case "R2":
+			return registerFile.R2;
+		case "R3":
+			return registerFile.R3;
+		case "R4":
+			return registerFile.R4;
+		case "R5":
+			return registerFile.R5;
+		case "R6":
+			return registerFile.R6;
+		case "R7":
+			return registerFile.R7;
+		}
+		return null;
+	}
+	
+	public int getRegisterInt(String register) {
+		switch (register) {
+		case "R0":
+			return 0;
+		case "R1":
+			return 1;
+		case "R2":
+			return 2;
+		case "R3":
+			return 3;
+		case "R4":
+			return 4;
+		case "R5":
+			return 5;
+		case "R6":
+			return 6;
+		case "R7":
+			return 7;
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * @throws IOException 
+	 * @throws NumberFormatException *********************** *******************************************/
+	/*public static void main(String[] args) throws NumberFormatException,
 			IOException {
 		int latency = 0;
 
@@ -494,9 +573,7 @@ public class Simulator {
 
 		simulator.registerFile.PC.setValue(decimalToBinary(Integer
 				.parseInt(startAddress)));
-		/*** new ***/
 		Arrays.fill(simulator.regROB,-1);
-		/*** ***/
 		String address = startAddress;
 		int numberOfInstructions = Integer.parseInt(bf.readLine());
 		int numOfInstructions = numberOfInstructions;
@@ -635,14 +712,7 @@ public class Simulator {
 					System.out.println(" ");
 				}
 				
-				break;
-				
-				
-				
-				
-				
-				
-				
+				break;		
 			case "SW":
 				 i = 0;
 				 simulator.setCache(simulator.caches.get(0));
@@ -785,5 +855,47 @@ public class Simulator {
 		}
 		simulator.getHitRatios();
 		System.out.println(latency);
+	}*/
+	public static int getExecutionCycles(String instruction, int [] latencies){
+		String [] inst = instruction.split(" "); 
+		switch(inst[0]){
+		case "LW":
+			return latencies[0]; 
+		case "SW":
+			return latencies[1]; 
+		case "JMP":
+			return latencies[2]; 
+		case "BEQ":
+			return latencies[3]; 
+		case "JALR":
+			return latencies[4]; 
+		case "RET":
+			return latencies[5]; 
+		case "ADD":
+			return latencies[6]; 
+		case "SUB":
+			return latencies[7]; 
+		case "ADDI":
+			return latencies[8]; 
+		case "NAND":
+			return latencies[9]; 
+		case "MUL":
+			return latencies[10];
+		}
+		return 0;
+	}
+	public static void main(String[] args) throws NumberFormatException, IOException {
+	BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+	int num = Integer.parseInt(bf.readLine());
+	int[] latencies = new int [11]; 
+	Instruction [] instructions = new Instruction[num];
+	for(int i =0; i<11; i++){
+		latencies[i] = Integer.parseInt(bf.readLine());
+	}
+	for(int i=0; i<num; i++){
+		String instruction =bf.readLine(); 
+		instructions[i]=new Instruction(instruction, status[0],false,getExecutionCycles(instruction, latencies));
+	}
+	
 	}
 }
