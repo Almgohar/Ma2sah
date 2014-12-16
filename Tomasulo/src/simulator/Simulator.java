@@ -1,6 +1,4 @@
 package simulator;
-import java.util.*;
-
 import helpers.Instruction;
 
 import java.io.BufferedReader;
@@ -14,17 +12,15 @@ import components.Cache;
 import components.CommonDataBus;
 import components.Memory;
 import components.Parser;
-import components.Record;
 import components.Register;
 import components.RegisterFile;
 import components.ReorderBuffer;
 import components.ReservationStation;
-import components.Set;
 import components.Tuple;
 
 public class Simulator {
 	/*** new ***/
-	public ArrayList<ReservationStation> reservationStations;
+	public static ArrayList<ReservationStation> reservationStations;
 	ReorderBuffer ROB;
 	CommonDataBus CDB;
 	static String [] status = {"init","fetch","issue",

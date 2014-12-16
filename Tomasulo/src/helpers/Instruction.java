@@ -105,7 +105,7 @@ public class Instruction {
 		return executeCycle == executeCycleCount;
 	}
 
-	public void setValue(String execute) {
+	public void setValue(String value) {
 		this.value =value;
 		
 	}
