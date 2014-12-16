@@ -24,12 +24,12 @@ import components.Tuple;
 
 public class Simulator {
 	/*** new ***/
-	public static ArrayList<ReservationStation> reservationStations = new ArrayList<ReservationStation>();
-	ReorderBuffer ROB = new ReorderBuffer(7);
-	CommonDataBus CDB = new CommonDataBus(null, false);
+	public ArrayList<ReservationStation> reservationStations;
+	ReorderBuffer ROB;
+	CommonDataBus CDB;
 	static String [] status = {"init","fetch","issue",
 			"execute","write","commit"};
-	int [] regROB = new int [8];
+	int [] regROB;
 	
 	/*** ***/
 	ArrayList<Cache> caches = new ArrayList<Cache>();
@@ -38,6 +38,17 @@ public class Simulator {
 	Memory memory;
 	ALU alu;
 	Cache cache;
+	
+	public Simulator(int size, HashMap<String,String> iMemory, ArrayList<ReservationStation>reservationStations){
+		this.reservationStations = reservationStations;
+		this.CDB= new CommonDataBus(null, false);
+		this.regROB = new int [8];
+		this.ROB = new ReorderBuffer(size); 
+		this.alu = new ALU(registerFile);
+		this.memory = new Memory(iMemory);
+		this.parser = new Parser(alu, registerFile);
+		
+	}
 
 	public Simulator(int numOfCaches, ArrayList<Tuple> tuples,
 			HashMap<String, String> iMemory, int memoryCycles) {
@@ -263,7 +274,7 @@ public class Simulator {
 	}
 	
 	public boolean canExecute(ReservationStation resStation, Instruction instruction){
-		if(instruction.getOpcode().equals("LD")){
+		if(instruction.getOpcode().equals("LW")){
 			if(instruction.getExecuteCycle()==0){
 				if(resStation.getQj()==null && !ROB.hasStore())
 					return true; 
@@ -305,7 +316,7 @@ public class Simulator {
 		return (ROB.getHead() == index && ROB.isReady(index));
 	}
 	
-	public boolean canWrite(ReservationStation resStation, int index){
+	public boolean canWrite(ReservationStation resStation){
 		return !(CDB.isBusy());
 	}
 	
@@ -884,11 +895,24 @@ public class Simulator {
 		}
 		return 0;
 	}
+	public static boolean checkDone(boolean[] doneArray){
+		boolean done =true; 
+		for(int i=0; i<doneArray.length; i++){
+			if(doneArray[i]==false){
+				done =false; 
+			break;
+			}
+		}
+		return done; 
+	}
 	public static void main(String[] args) throws NumberFormatException, IOException {
 	BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
 	int num = Integer.parseInt(bf.readLine());
 	int[] latencies = new int [11]; 
 	Instruction [] instructions = new Instruction[num];
+	boolean [] done = new boolean[num]; 
+	int ROBSize = Integer.parseInt(bf.readLine()); 
+	
 	for(int i =0; i<11; i++){
 		latencies[i] = Integer.parseInt(bf.readLine());
 	}
@@ -896,6 +920,96 @@ public class Simulator {
 		String instruction =bf.readLine(); 
 		instructions[i]=new Instruction(instruction, status[0],false,getExecutionCycles(instruction, latencies));
 	}
+	HashMap<String,String> iMemory = new HashMap<String, String>(); 
+	ArrayList<ReservationStation> resStation = new ArrayList<ReservationStation>(11); 
+	String [] araf = {"LW","SW","BEQ","JALR","JMP","RET","ADD","ADDI","SUB","MUL","NAND"};
+	for(int i = 0 ; i <resStation.size() ; i++){
+		resStation.add(new ReservationStation(araf[i]));
+	}
+	Simulator simulator = new Simulator(ROBSize,iMemory, resStation); 
+	while(!checkDone(done)){
+		for(int i=0; i<instructions.length; i++){
+			if(!done[i]){
+				ReservationStation station = null;
+				String opcode = instructions[i].getOpcode();
+				//switch ha ha ha -.-
+				switch(opcode) {
+				case "LW": station = resStation.get(0);
+					break;
+				case "SW": station = resStation.get(1);
+					break;
+				case "BEQ": station = resStation.get(2);
+					break;
+				case "JALR": station = resStation.get(3);
+					break;
+				case "JMP": station = resStation.get(4);
+					break;
+				case "RET": station = resStation.get(5);
+					break;
+				case "ADD": station = resStation.get(6);
+					break;
+				case "ADDI": station = resStation.get(7);
+					break;
+				case "SUB": station = resStation.get(8);
+					break;
+				case "MUL": station = resStation.get(9);
+					break;
+				case "NAND": station = resStation.get(10);
+					break;	
+				}
+				if(instructions[i].getStatus().equals(status[0])){
+					if(simulator.canIssue(instructions[i])){
+						instructions[i].setStall(false);
+						simulator.issue(instructions[i],station ,simulator.ROB.getTail());
+						instructions[i].setStatus(status[1]);
+					} 
+					else{
+						instructions[i].setStall(true);
+						break;
+					}
+					}
+				else{
+					if(instructions[i].getStatus().equals(status[1])){
+						if(instructions[i].isFinished()){
+							instructions[i].setStatus(status[2]);
+						}
+						if(simulator.canExecute(station, instructions[i])){
+							instructions[i].setStall(false);
+							
+							instructions[i].setValue(simulator.execute(instructions[i]));
+							instructions[i].incrementExecCycleCount();
+						}
+						else{
+							instructions[i].setStall(true);
+						}
+				}
+					else{
+						if(instructions[i].getStatus().equals(status[2])){
+							if(simulator.canWrite(station)){
+								instructions[i].setStall(false);
+								instructions[i].setStatus(status[3]);
+								simulator.write(station, instructions[i].getValue());
+								}
+							else{
+								instructions[i].setStall(true);
+							}
+							}
+						else{
+							if(simulator.canCommit(station)){
+								instructions[i].setStall(false);
+								simulator.commit(instructions[i]);
+								done[i]=true;
+							}
+							else{
+								instructions[i].setStall(true);
+							}
+						}
+						}
+					}
+				}
+			}
+		}
+	}
 	
 	}
-}
+

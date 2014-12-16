@@ -10,6 +10,7 @@ public class Instruction {
 	String instruction; //instruction coming from the simulator
 	boolean immediate; //checks if the instruction is an i-instrction
 	String[] inst;
+	String value;
 
 	public Instruction(String instruction, String status, boolean stall,
 			int executeCycle) {
@@ -102,6 +103,15 @@ public class Instruction {
 
 	public boolean isFinished() {
 		return executeCycle == executeCycleCount;
+	}
+
+	public void setValue(String execute) {
+		this.value =value;
+		
+	}
+	public String getValue() {
+		return value;
+		
 	}
 
 }

@@ -4,8 +4,8 @@ import helpers.FunctionalUnit;
 
 public class ReservationStation {
 	//FunctionalUnit unit; 
-	String unit;
-	String operation;
+	String unit; 
+	String operation; // esmha wa7da wa7da zai opcode
 	String vj;
 	String vk;
 	String qj;
