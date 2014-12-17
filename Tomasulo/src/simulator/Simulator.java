@@ -825,6 +825,14 @@ public class Simulator {
 	public static void main(String[] args) throws NumberFormatException,
 			IOException {
 		BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+		HashMap<String, String> iMemory = new HashMap<String, String>();
+		String dataCount = bf.readLine();
+		int dataC = Integer.parseInt(dataCount);
+		for(int i=0; i<dataC; i++){
+			String line = bf.readLine();
+			String lineArray[] = line.split(" ");
+			iMemory.put(decimalToBinary(Integer.parseInt(lineArray[0])), lineArray[1]);
+		}
 
 		// getting start address
 		String theAddress = bf.readLine();
@@ -837,7 +845,6 @@ public class Simulator {
 		int[] latencies = new int[11];
 		Instruction[] instructions = new Instruction[num];
 		boolean[] done = new boolean[num];
-		HashMap<String, String> iMemory = new HashMap<String, String>();
 		int ROBSize = Integer.parseInt(bf.readLine());
 
 		for (int i = 0; i < 11; i++) {
