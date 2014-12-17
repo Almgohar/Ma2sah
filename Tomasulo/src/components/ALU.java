@@ -77,8 +77,9 @@ public class ALU {
 		return decimalToBinary(newValue);
 
 	}
-
-	/*public void beq(String instruction) {
+	// updated to return.
+	//this is not correct, not equal should keep going, then flush in commit
+	public boolean beq(String instruction) {
 		String[] instArray = instruction.split(" ");
 		Register source1 = getRegister(1, instArray);
 		Register source2 = getRegister(2, instArray);
@@ -87,8 +88,10 @@ public class ALU {
 			int pcValue = binaryToDecimal(registerFile.PC.getValue());
 			int newValue = pcValue + imm;
 			registerFile.PC.setValue(decimalToBinary(newValue));
+			return true;
 		}
-	}*/
+		return false;
+	}
 
 	public int binaryToDecimal(String binary) {
 		int decimal = 0;

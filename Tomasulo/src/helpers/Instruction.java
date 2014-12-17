@@ -33,17 +33,20 @@ public class Instruction {
 	}
 
 	public int getRS() {
-		return Integer.parseInt(inst[2]);
+		// need to get rid of R
+		return Integer.parseInt(inst[2].substring(1));
 	}
 
 	public int getRT() {
+		// need to get rid of R
 		if(!immediate)
-			return Integer.parseInt(inst[3]);
+			return Integer.parseInt(inst[3].substring(1));
 		return 0;
 	}
 
 	public int getRD() {
-		return Integer.parseInt(inst[1]);
+		// need to get rid of R
+		return Integer.parseInt(inst[1].substring(1));
 	}
 
 	public String getType() {
@@ -71,6 +74,7 @@ public class Instruction {
 			return "uncondBranch";
 		case "RET" :
 			return "return";
+		//////////////////
 		}
 		return "null";
 	}
