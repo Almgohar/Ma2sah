@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.naming.BinaryRefAddr;
+
 import components.ALU;
 import components.Cache;
 import components.CommonDataBus;
@@ -63,7 +65,7 @@ public class Simulator {
 		this.cache = cache;
 	}
 
-	public int binaryToDecimal(String binary) {
+	public static int binaryToDecimal(String binary) {
 		int decimal = 0;
 		for (int i = binary.length() - 1; i >= 0; i--) {
 			decimal += (binary.charAt(i) - '0')
@@ -291,7 +293,8 @@ public class Simulator {
 				}
 			}
 		}
-		if(instruction.getOpcode().equals("SD")){
+		// check if typo
+		if(instruction.getOpcode().equals("SW")){
 			if(resStation.getQj()==null){
 				//&& ROB.getEntry(ROB.getHead()).getType()=="SD"){
 				//can only have one store
@@ -423,7 +426,7 @@ public class Simulator {
 				}
 		}
 		switch(opcode){
-		case "LD":
+		case "LW":
 			if(instruction.getExecuteCycleCount()==0){
 				String value = decimalToBinary(binaryToDecimal(station.getVj()) + binaryToDecimal(station.getAddress()));
 				station.setAddress(value);
@@ -432,8 +435,8 @@ public class Simulator {
 			else{
 				return memory.getValue(station.getAddress());
 			}
-		case "SD":
-			int index = ROB.getIndex("SD");
+		case "SW":
+			int index = ROB.getIndex("SW");
 			String value  = decimalToBinary(binaryToDecimal(station.getVj()) + binaryToDecimal(station.getAddress()));
 			ROB.updateValue(index, value);
 			return value;  
@@ -903,26 +906,48 @@ public class Simulator {
 	}
 	public static void main(String[] args) throws NumberFormatException, IOException {
 	BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+	
+	// getting start address
+	String theAddress = bf.readLine();
+	// memory accessed using binary indices?
+	String startAddress = decimalToBinary(Integer.parseInt(theAddress));
+	// just to preserve the start Address for initializing pc
+	String addressCounter = startAddress;
+	
 	int num = Integer.parseInt(bf.readLine());
 	int[] latencies = new int [11]; 
 	Instruction [] instructions = new Instruction[num];
-	boolean [] done = new boolean[num]; 
+	boolean [] done = new boolean[num];
+	HashMap<String,String> iMemory = new HashMap<String, String>();
 	int ROBSize = Integer.parseInt(bf.readLine()); 
 	
 	for(int i =0; i<11; i++){
 		latencies[i] = Integer.parseInt(bf.readLine());
 	}
+	int currentAddress;
 	for(int i=0; i<num; i++){
-		String instruction =bf.readLine(); 
+		String instruction =bf.readLine();
+		
+		// store instructions in memory
+		iMemory.put(addressCounter, instruction);
+		currentAddress = binaryToDecimal(startAddress);
+		currentAddress++;
+		addressCounter = decimalToBinary(currentAddress);
+		
 		instructions[i]=new Instruction(instruction, status[0],false,getExecutionCycles(instruction, latencies));
 	}
-	HashMap<String,String> iMemory = new HashMap<String, String>(); 
+	 
 	ArrayList<ReservationStation> resStation = new ArrayList<ReservationStation>(11); 
 	String [] araf = {"LW","SW","BEQ","JALR","JMP","RET","ADD","ADDI","SUB","MUL","NAND"};
 	for(int i = 0 ; i <resStation.size() ; i++){
 		resStation.add(new ReservationStation(araf[i]));
 	}
-	Simulator simulator = new Simulator(ROBSize,iMemory, resStation); 
+	Simulator simulator = new Simulator(ROBSize,iMemory, resStation);
+	
+	// set initial value of pc
+	simulator.registerFile.PC.setValue(decimalToBinary(Integer
+			.parseInt(startAddress)));
+	
 	while(!checkDone(done)){
 		for(int i=0; i<instructions.length; i++){
 			if(!done[i]){
@@ -953,25 +978,38 @@ public class Simulator {
 				case "NAND": station = resStation.get(10);
 					break;	
 				}
-				if(instructions[i].getStatus().equals(status[0])){
-					if(simulator.canIssue(instructions[i])){
-						instructions[i].setStall(false);
-						simulator.issue(instructions[i],station ,simulator.ROB.getTail());
-						instructions[i].setStatus(status[1]);
+				// calculate the index of the instruction by subtracting 
+				// the current pc from origin?
+				// howa keda keda el issuing bl tarteeb fa mmkin n-issue bl pc
+				// problem with new iteration, will deal with the instructions fl nos as not issued?
+				// or because to get the new pc address we need to finish execution of branch?
+				// or at least part of calculating address?
+				int calc;
+				int currentinst = binaryToDecimal(simulator.registerFile.PC.getValue())-Integer.parseInt(theAddress);
+				if(instructions[currentinst].getStatus().equals(status[0])){
+					if(simulator.canIssue(instructions[currentinst])){
+						instructions[currentinst].setStall(false);
+						simulator.issue(instructions[currentinst],station ,simulator.ROB.getTail());
+						instructions[currentinst].setStatus(status[1]);
+						calc = binaryToDecimal(simulator.registerFile.PC.getValue());
+						calc ++;
+						simulator.registerFile.PC.setValue(decimalToBinary(calc));
+						
 					} 
 					else{
-						instructions[i].setStall(true);
+						instructions[currentinst].setStall(true);
 						break;
 					}
 					}
 				else{
 					if(instructions[i].getStatus().equals(status[1])){
+						//how come?! the isFinished is supposed to be with execute
+						// why is it used with the fetching?
 						if(instructions[i].isFinished()){
 							instructions[i].setStatus(status[2]);
 						}
 						if(simulator.canExecute(station, instructions[i])){
 							instructions[i].setStall(false);
-							
 							instructions[i].setValue(simulator.execute(instructions[i]));
 							instructions[i].incrementExecCycleCount();
 						}

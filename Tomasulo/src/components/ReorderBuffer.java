@@ -45,7 +45,8 @@ public class ReorderBuffer {
 	public boolean hasStore() {
 		int headPointer = head;
 		while (headPointer <= tail) {
-			if (tuples[headPointer].getType().equals("SD"))
+			// check if not typo
+			if (tuples[headPointer].getType().equals("SW"))
 				return true;
 			headPointer = (headPointer + 1) % size;
 		}
@@ -56,7 +57,8 @@ public class ReorderBuffer {
 		ArrayList<String> list = new ArrayList<String>();
 		int headPointer = head;
 		while (headPointer <= tail) {
-			if (tuples[headPointer].getType().equals("SD"))
+			// check if not typo
+			if (tuples[headPointer].getType().equals("SW"))
 				list.add(tuples[headPointer].getValue());
 			headPointer = (headPointer + 1) % size;
 		}

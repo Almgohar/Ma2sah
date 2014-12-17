@@ -23,6 +23,7 @@ public class ALU {
 			return mul(dest, source1, source2);
 		case "NAND":
 			return nand(dest, source1, source2);
+		// add branch here to calculate the destination?
 		}
 		//registerFile.print();
 		return ""; 
@@ -77,7 +78,7 @@ public class ALU {
 
 	}
 
-	public void beq(String instruction) {
+	/*public void beq(String instruction) {
 		String[] instArray = instruction.split(" ");
 		Register source1 = getRegister(1, instArray);
 		Register source2 = getRegister(2, instArray);
@@ -87,7 +88,7 @@ public class ALU {
 			int newValue = pcValue + imm;
 			registerFile.PC.setValue(decimalToBinary(newValue));
 		}
-	}
+	}*/
 
 	public int binaryToDecimal(String binary) {
 		int decimal = 0;

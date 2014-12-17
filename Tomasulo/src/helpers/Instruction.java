@@ -61,6 +61,16 @@ public class Instruction {
 			return "load";
 		case "SW":
 			return "store";
+			
+		// added to get branch type of instruction
+		case "BEQ":
+			return "condBranch";
+		case "JMP":
+			return "uncondBranch";
+		case "JAL":
+			return "uncondBranch";
+		case "RET" :
+			return "return";
 		}
 		return "null";
 	}
