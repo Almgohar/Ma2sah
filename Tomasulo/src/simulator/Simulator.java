@@ -25,6 +25,7 @@ public class Simulator {
 	/*** new ***/
 	public static int cycles = 0;
 	public static ArrayList<ReservationStation> reservationStations;
+	public static int branches = 0;
 	ReorderBuffer ROB;
 	CommonDataBus CDB;
 	static String[] status = { "init", "fetch", "issue", "execute", "write",
@@ -38,6 +39,7 @@ public class Simulator {
 	Memory memory;
 	ALU alu;
 	Cache cache;
+	
 
 	public Simulator(int size, HashMap<String, String> iMemory,
 			ArrayList<ReservationStation> reservationStations) {
@@ -450,8 +452,10 @@ public class Simulator {
 		case "BEQ":
 			calc = binaryToDecimal(registerFile.PC.getValue()) + 1;
 			ROBindex = ROB.getIndex("BEQ");
+			branches++;
 			if(!alu.beq(instruction.getInst())) {
 				registerFile.PC.setValue(decimalToBinary(calc));
+				branches--;
 			}
 			ROB.jFlush(ROBindex);
 			return registerFile.PC.getValue();
