@@ -26,6 +26,7 @@ public class Simulator {
 	public static int cycles = 0;
 	public static ArrayList<ReservationStation> reservationStations;
 	public static int branches = 0;
+	public static int missedBranches = 0;
 	ReorderBuffer ROB;
 	CommonDataBus CDB;
 	static String[] status = { "init", "fetch", "issue", "execute", "write",
@@ -457,7 +458,7 @@ public class Simulator {
 			branches++;
 			if(!alu.beq(instruction.getInst())) {
 				registerFile.PC.setValue(decimalToBinary(calc));
-				branches--;
+				missedBranches++;
 			}
 			ROB.jFlush(ROBindex);
 			return registerFile.PC.getValue();
@@ -971,6 +972,10 @@ public class Simulator {
 		System.out.println("Cycle: "+cycles+" Completed Instructions: " + (completed+1));
 		System.out.println("Total Cycles : " + cycles);
 		System.out.println("IPC : " + getIPC(num));
+		System.out.println("Branches: " + branches);
+		System.out.println("Missed Branches: "+ missedBranches);
+		double miss =  (double)missedBranches/(double)branches;
+		System.out.println("Misprediction ratio :" + miss);
 		}
 		
 		}
