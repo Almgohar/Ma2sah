@@ -867,117 +867,108 @@ public class Simulator {
 		simulator.registerFile.PC.setValue(decimalToBinary(Integer
 				.parseInt(startAddress)));
 
-		while (!checkDone(done)) {
-			cycles++;
-			for (int i = 0; i < instructions.length; i++) {
-				if (!done[i]) {
+		int completed = 0;
+		while(!checkDone(done)){
+			cycles ++;
+			completed = 0;
+			for(int i=0; i<instructions.length; i++){
+				if(!done[i]){
 					ReservationStation station = null;
 					String opcode = instructions[i].getOpcode();
-					// switch ha ha ha -.-
-					switch (opcode) {
-					case "LW":
-						station = resStation.get(0);
+					//switch ha ha ha -.-
+					switch(opcode) {
+					case "LW": station = resStation.get(0);
 						break;
-					case "SW":
-						station = resStation.get(1);
+					case "SW": station = resStation.get(1);
 						break;
-					case "BEQ":
-						station = resStation.get(2);
+					case "BEQ": station = resStation.get(2);
 						break;
-					case "JALR":
-						station = resStation.get(3);
+					case "JALR": station = resStation.get(3);
 						break;
-					case "JMP":
-						station = resStation.get(4);
+					case "JMP": station = resStation.get(4);
 						break;
-					case "RET":
-						station = resStation.get(5);
+					case "RET": station = resStation.get(5);
 						break;
-					case "ADD":
-						station = resStation.get(6);
+					case "ADD": station = resStation.get(6);
 						break;
-					case "ADDI":
-						station = resStation.get(7);
+					case "ADDI": station = resStation.get(7);
 						break;
-					case "SUB":
-						station = resStation.get(8);
+					case "SUB": station = resStation.get(8);
 						break;
-					case "MUL":
-						station = resStation.get(9);
+					case "MUL": station = resStation.get(9);
 						break;
-					case "NAND":
-						station = resStation.get(10);
-						break;
+					case "NAND": station = resStation.get(10);
+						break;	
 					}
-					// calculate the index of the instruction by subtracting
+					// calculate the index of the instruction by subtracting 
 					// the current pc from origin?
-					// howa keda keda el issuing bl tarteeb fa mmkin n-issue bl
-					// pc
-					// problem with new iteration, will deal with the
-					// instructions fl nos as not issued?
-					// or because to get the new pc address we need to finish
-					// execution of branch?
+					// howa keda keda el issuing bl tarteeb fa mmkin n-issue bl pc
+					// problem with new iteration, will deal with the instructions fl nos as not issued?
+					// or because to get the new pc address we need to finish execution of branch?
 					// or at least part of calculating address?
 					int calc;
-					int currentinst = binaryToDecimal(simulator.registerFile.PC
-							.getValue()) - Integer.parseInt(theAddress);
-					System.out.println(currentinst);
-					if (currentinst < instructions.length
-							&& instructions[currentinst].getStatus().equals(
-									status[0])) {
-						if (simulator.canIssue(instructions[currentinst])) {
+					int currentinst = binaryToDecimal(simulator.registerFile.PC.getValue())-Integer.parseInt(theAddress);
+					if(currentinst<instructions.length && instructions[currentinst].getStatus().equals(status[0])){
+						if(simulator.canIssue(instructions[currentinst])){
 							instructions[currentinst].setStall(false);
-							simulator.issue(instructions[currentinst], station,
-									simulator.ROB.getTail());
+							simulator.issue(instructions[currentinst],station ,simulator.ROB.getTail());
 							instructions[currentinst].setStatus(status[1]);
-							calc = binaryToDecimal(simulator.registerFile.PC
-									.getValue());
-							calc++;
-							simulator.registerFile.PC
-									.setValue(decimalToBinary(calc));
-
-						} else {
+							calc = binaryToDecimal(simulator.registerFile.PC.getValue());
+							calc ++;
+							simulator.registerFile.PC.setValue(decimalToBinary(calc));
+							
+						} 
+						else{
 							instructions[currentinst].setStall(true);
 							break;
 						}
-					} else {
-						if (instructions[i].getStatus().equals(status[1])) {
-							if (instructions[i].isFinished()) {
+						}
+					else{
+						if(instructions[i].getStatus().equals(status[1])){
+							if(instructions[i].isFinished()){
 								instructions[i].setStatus(status[2]);
 							}
-							if (simulator.canExecute(station, instructions[i])) {
+							if(simulator.canExecute(station, instructions[i])){
 								instructions[i].setStall(false);
-								instructions[i].setValue(simulator
-										.execute(instructions[i]));
+								instructions[i].setValue(simulator.execute(instructions[i]));
 								instructions[i].incrementExecCycleCount();
-							} else {
+							}
+							else{
 								instructions[i].setStall(true);
 							}
-						} else {
-							if (instructions[i].getStatus().equals(status[2])) {
-								if (simulator.canWrite(station)) {
+					}
+						else{
+							if(instructions[i].getStatus().equals(status[2])){
+								if(simulator.canWrite(station)){
 									instructions[i].setStall(false);
 									instructions[i].setStatus(status[3]);
-									simulator.write(station,
-											instructions[i].getValue());
-								} else {
+									simulator.write(station, instructions[i].getValue());
+									}
+								else{
 									instructions[i].setStall(true);
 								}
-							} else {
-								if (simulator.canCommit(station)) {
+								}
+							else{
+								if(simulator.canCommit(station)){
 									instructions[i].setStall(false);
 									simulator.commit(instructions[i]);
-									done[i] = true;
-								} else {
+									done[i]=true;
+								}
+								else{
 									instructions[i].setStall(true);
 								}
 							}
+							}
 						}
+					}else{
+						completed++;
 					}
 				}
+			System.out.println("Cycle: "+cycles+" Completed Instructions: " + completed);
 			}
+		System.out.println("Cycle: "+cycles+" Completed Instructions: " + (completed+1));
+		System.out.println("Total Cycles : " + cycles);
+		System.out.println("IPC : " + getIPC(num));
 		}
-		System.out.println(getIPC(num));
-	}
-
-}
+		
+		}
