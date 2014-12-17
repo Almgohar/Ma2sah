@@ -442,7 +442,7 @@ public class Simulator {
 			ROB.updateValue(index, value);
 			return value;  
 		case "JMP":
-			 int calc = binaryToDecimal(station.getVj()) + 1 + binaryToDecimal(instruction.getImm()+"");
+			 int calc = binaryToDecimal(registerFile.PC.getValue()) + binaryToDecimal(station.getVj()) + 1 + binaryToDecimal(instruction.getImm()+"");
 			registerFile.PC.setValue(decimalToBinary(calc));
 			int ROBindex = ROB.getIndex("JMP");
 			ROB.jFlush(ROBindex);
