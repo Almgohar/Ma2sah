@@ -22,6 +22,7 @@ import components.Tuple;
 
 public class Simulator {
 	/*** new ***/
+	public static int cycles = 0;
 	public static ArrayList<ReservationStation> reservationStations;
 	ReorderBuffer ROB;
 	CommonDataBus CDB;
@@ -39,7 +40,7 @@ public class Simulator {
 	
 	public Simulator(int size, HashMap<String,String> iMemory, ArrayList<ReservationStation>reservationStations){
 		this.reservationStations = reservationStations;
-		this.CDB= new CommonDataBus(null, false);
+		this.CDB= new CommonDataBus(false);
 		this.regROB = new int [8];
 		this.ROB = new ReorderBuffer(size); 
 		this.alu = new ALU(registerFile);
@@ -546,6 +547,7 @@ public class Simulator {
 	 * @throws IOException 
 	 * @throws NumberFormatException *********************** *******************************************/
 	/*public static void main(String[] args) throws NumberFormatException,
+
 			IOException {
 		int latency = 0;
 
@@ -866,6 +868,9 @@ public class Simulator {
 		simulator.getHitRatios();
 		System.out.println(latency);
 	}*/
+	public static double getIPC(int instructions) {
+		return (double)instructions/(double)cycles;
+	}
 	public static int getExecutionCycles(String instruction, int [] latencies){
 		String [] inst = instruction.split(" "); 
 		switch(inst[0]){
@@ -939,7 +944,7 @@ public class Simulator {
 	 
 	ArrayList<ReservationStation> resStation = new ArrayList<ReservationStation>(11); 
 	String [] araf = {"LW","SW","BEQ","JALR","JMP","RET","ADD","ADDI","SUB","MUL","NAND"};
-	for(int i = 0 ; i <resStation.size() ; i++){
+	for(int i = 0 ; i <11; i++){
 		resStation.add(new ReservationStation(araf[i]));
 	}
 	Simulator simulator = new Simulator(ROBSize,iMemory, resStation);
@@ -949,6 +954,7 @@ public class Simulator {
 			.parseInt(startAddress)));
 	
 	while(!checkDone(done)){
+		cycles ++;
 		for(int i=0; i<instructions.length; i++){
 			if(!done[i]){
 				ReservationStation station = null;
@@ -986,7 +992,8 @@ public class Simulator {
 				// or at least part of calculating address?
 				int calc;
 				int currentinst = binaryToDecimal(simulator.registerFile.PC.getValue())-Integer.parseInt(theAddress);
-				if(instructions[currentinst].getStatus().equals(status[0])){
+				System.out.println(currentinst);
+				if(currentinst<instructions.length && instructions[currentinst].getStatus().equals(status[0])){
 					if(simulator.canIssue(instructions[currentinst])){
 						instructions[currentinst].setStall(false);
 						simulator.issue(instructions[currentinst],station ,simulator.ROB.getTail());
@@ -1043,6 +1050,7 @@ public class Simulator {
 				}
 			}
 		}
+	System.out.println(getIPC(num));
 	}
 	
 	}
