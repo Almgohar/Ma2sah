@@ -20,8 +20,9 @@ public class Instruction {
 		stall = false;
 		this.executeCycle = executeCycle;
 		this.inst = instruction.split(" ");
-		if(inst[0].equalsIgnoreCase("addi"));
-			immediate = true;
+		if(inst[0].equalsIgnoreCase("addi"))
+				immediate = true;
+			
 	}
 
 	public String getInst() {
