@@ -20,6 +20,8 @@ public class Instruction {
 		stall = false;
 		this.executeCycle = executeCycle;
 		this.inst = instruction.split(" ");
+		if(inst[0].equalsIgnoreCase("addi"));
+			immediate = true;
 	}
 
 	public String getInst() {
@@ -41,7 +43,11 @@ public class Instruction {
 		// need to get rid of R
 		if(!immediate)
 			return Integer.parseInt(inst[3].substring(1));
-		return 0;
+		return -1;
+	}
+
+	public boolean isImmediate() {
+		return immediate;
 	}
 
 	public int getRD() {

@@ -287,7 +287,7 @@ public class Simulator {
 		int rs = instruction.getRS();
 		Register regVj;
 		Register regVk;
-		int rt = instruction.getRT();
+		
 		int rd = instruction.getRD();
 		String inst = instruction.getInst();
 		if (regROB[rs] == -1) {
@@ -339,7 +339,8 @@ public class Simulator {
 		resStation.setBusy(true);
 		resStation.setDest(ROBIndex + "");
 		ROB.insert(inst);
-
+		if(!instruction.isImmediate()) {
+			int rt = instruction.getRT();
 		if (instruction.getType().equals("FP")
 				|| instruction.getType().equals("store")) {
 			if (regROB[rt] == -1) {
@@ -386,13 +387,14 @@ public class Simulator {
 					resStation.setVk(null);
 				resStation.setQk(null);
 			}
+			}
 		}
 		if (instruction.getType().equals("store")) {
 			resStation.setAddress(instruction.getImm() + "");
 		}
 		if (instruction.getType().equals("load")) {
 			resStation.setAddress(instruction.getImm() + "");
-			rt = instruction.getRD();
+			int rt = instruction.getRD();
 			regROB[rt] = ROBIndex;
 		}
 		if (instruction.getType().equals("FP")) {
