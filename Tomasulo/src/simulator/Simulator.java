@@ -441,6 +441,26 @@ public class Simulator {
 			String value  = decimalToBinary(binaryToDecimal(station.getVj()) + binaryToDecimal(station.getAddress()));
 			ROB.updateValue(index, value);
 			return value;  
+		case "JMP":
+			 int calc = binaryToDecimal(station.getVj()) + 1 + binaryToDecimal(instruction.getImm()+"");
+			registerFile.PC.setValue(decimalToBinary(calc));
+			int ROBindex = ROB.getIndex("JMP");
+			ROB.jFlush(ROBindex);
+			return decimalToBinary(calc);
+		case "JALR": 
+			calc = binaryToDecimal(station.getVk());
+			registerFile.PC.setValue(decimalToBinary(calc));
+			ROBindex = ROB.getIndex("JALR");
+			Register link = registerFile.getRegister(instruction.getRS());
+			link.setValue(decimalToBinary(binaryToDecimal(registerFile.PC.getValue())+1));
+			ROB.jFlush(ROBindex);
+			return decimalToBinary(calc);
+		case "RET": 
+			calc = binaryToDecimal(station.getVj());
+			registerFile.PC.setValue(decimalToBinary(calc));
+			ROBindex = ROB.getIndex("JMP");
+			ROB.jFlush(ROBindex);
+			return decimalToBinary(calc);
 		default: return alu.arithmetic(instruction.getInst());
 		}
 		
@@ -1010,8 +1030,6 @@ public class Simulator {
 					}
 				else{
 					if(instructions[i].getStatus().equals(status[1])){
-						//how come?! the isFinished is supposed to be with execute
-						// why is it used with the fetching?
 						if(instructions[i].isFinished()){
 							instructions[i].setStatus(status[2]);
 						}

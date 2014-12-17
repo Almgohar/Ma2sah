@@ -41,7 +41,7 @@ public class ReorderBuffer {
 	public ROBTuple getEntry(int index) {
 		return tuples[index];
 	}
-	
+
 	public boolean hasStore() {
 		int headPointer = head;
 		while (headPointer <= tail) {
@@ -64,7 +64,7 @@ public class ReorderBuffer {
 		}
 		return list;
 	}
-	
+
 	public int getIndex(String opCode) {
 		for (int i = 0; i < size; i++) {
 			if (tuples[i].getValue() != null) {
@@ -82,6 +82,19 @@ public class ReorderBuffer {
 
 	public void updateValue(int index, String value) {
 		tuples[index].setValue(value);
+	}
+
+	public void jFlush(int index) {
+		if (index < tail) {
+			for (int i = index++; i < tail; i++)
+				tuples[i] = null;
+		} else {
+			for (int i = index++; i < tuples.length; i++)
+				tuples[i] = null;
+			for (int j = 0; j < tail; j++)
+				tuples[j] = null;
+		}
+
 	}
 
 	public String getValue(int index) {
@@ -122,7 +135,8 @@ public class ReorderBuffer {
 				System.out.print("\t  " + tuple.getType() + "\t  "
 						+ tuple.getDest() + "\t ");
 				if (tuple.getValue() != "") {
-					System.out.print(tuple.getValue() + "   " + tuple.isReady());
+					System.out
+							.print(tuple.getValue() + "   " + tuple.isReady());
 				} else {
 					System.out.print("\t   " + tuple.isReady());
 				}
@@ -131,20 +145,13 @@ public class ReorderBuffer {
 
 	}
 
-/*	public static void main(String[] args) {
-		ReorderBuffer Rob = new ReorderBuffer(3);
-		Rob.print();
-		Rob.insert("LD R1");
-		Rob.insert("SD R2");
-		Rob.updateValue(1, "R2 + R3");
-		Rob.updateState(1, true);
-		Rob.print();
-		Rob.commit();
-		Rob.print();
-		Rob.insert("LD R3");
-		Rob.print();
-		Rob.insert("ADD R1");
-		Rob.print();
-
-	}*/
+	/*
+	 * public static void main(String[] args) { ReorderBuffer Rob = new
+	 * ReorderBuffer(3); Rob.print(); Rob.insert("LD R1"); Rob.insert("SD R2");
+	 * Rob.updateValue(1, "R2 + R3"); Rob.updateState(1, true); Rob.print();
+	 * Rob.commit(); Rob.print(); Rob.insert("LD R3"); Rob.print();
+	 * Rob.insert("ADD R1"); Rob.print();
+	 * 
+	 * }
+	 */
 }
